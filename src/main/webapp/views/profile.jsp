@@ -22,5 +22,15 @@
     <li>Created Date: ${user.createdDate}</li>
     <li>User logs: <a href="${pageContext.request.contextPath}/user/profile/logs">Logs</a></li>
 </ul>
+<hr>
+<a href="${pageContext.request.contextPath}/user/profile/edit">Edit</a>
+<div>
+    <c:if test="${not empty successMessage}">
+        <div class="error"> <strong>${successMessage}</strong> </div>
+    </c:if>
+    <c:if test="${not empty errorMessage}">
+        <div class="error"> <strong>${errorMessage}</strong> </div>
+    </c:if>
+</div>
 </body>
 </html>

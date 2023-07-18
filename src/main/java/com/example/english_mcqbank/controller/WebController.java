@@ -8,8 +8,12 @@ import com.example.english_mcqbank.service.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
 
@@ -68,6 +72,56 @@ public class WebController {
         userLogsModelAndView.addObject("user", user);
         userLogsModelAndView.addObject("logs", logs);
         return userLogsModelAndView; // Trả về user.jsp
+    }
+
+    @RequestMapping(value = "/user/profile/edit", method = RequestMethod.GET)
+    public ModelAndView editUserProfile(Authentication authentication, Model model) {
+        ModelAndView editUserModelAndView = new ModelAndView("editUser");
+        String username = authentication.getName();
+        UserEntity user = userService.getUserByUsername(username);
+        if (user == null) {
+            return new ModelAndView("redirect:/user/profile");
+        }
+        //editUserModelAndView.addObject("user", user);
+        model.addAttribute("currentUser", user);
+        return editUserModelAndView; // Trả về user.jsp
+    }
+
+    @RequestMapping(value = "/user/profile/edit", method = RequestMethod.POST)
+    public ModelAndView editUserProfile(Authentication authentication,
+                                        @ModelAttribute("currentUser") UserEntity user,
+                                        RedirectAttributes redirectAttributes) {
+        ModelAndView editUserModelAndView = new ModelAndView("editUser");
+        String username = authentication.getName();
+        UserEntity userEntity = userService.getUserByUsername(username);
+        if (userEntity == null) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Update profile failed!");
+            return new ModelAndView("redirect:/user/profile");
+        }
+
+        userEntity.setFullName(user.getFullName());
+        if (!user.getEmail().equals(userEntity.getEmail()) && userService.isEmailPresent(user.getEmail())) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Email is already in use!");
+            return editUserModelAndView;
+        } else {
+            userEntity.setEmail(user.getEmail());
+        }
+        if (!user.getPhone().equals(userEntity.getPhone()) && userService.isPhonePresent(user.getPhone())) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Phone is already in use!");
+            return editUserModelAndView;
+        } else {
+            userEntity.setPhone(user.getPhone());
+        }
+        userEntity.setAddress(user.getAddress());
+
+        try {
+            userService.saveUser(userEntity);
+            redirectAttributes.addFlashAttribute("successMessage", "Update profile successfully!");
+            return new ModelAndView("redirect:/user/profile");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Update profile failed!");
+            return editUserModelAndView;
+        }
     }
 
     @RequestMapping("/main")
