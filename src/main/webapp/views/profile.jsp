@@ -29,6 +29,9 @@
     <c:if test="${not empty successMessage}">
         <div class="error"> <strong>${successMessage}</strong> </div>
     </c:if>
+    <c:if test="${not empty errorMessage}">
+        <div class="error"> <strong>${errorMessage}</strong> </div>
+    </c:if>
 </div>
 <a href="${pageContext.request.contextPath}/index">Back to the home page</a>
 </body>

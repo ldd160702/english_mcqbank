@@ -42,7 +42,7 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
             logService.saveLog(log);
         }
 //        System.out.println("Authentication failed for username: " + username);
-        request.getSession().setAttribute("errorMessage", "Invalid Username or Password");
+        request.getSession().setAttribute("errorMessage2", "Invalid Username or Password");
         redirectStrategy.sendRedirect(request, response, "/login-page?error");
     }
 }

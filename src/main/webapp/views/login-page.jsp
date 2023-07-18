@@ -62,7 +62,7 @@
                                         Invalid username/password !!!
                                     </div>
                                 </c:if>
-                                <c:if test="${errorMessage != null}">
+                                <c:if test="${errorMessage2 != null}">
                                     <div class="alert alert-danger col-xs-offset-1 col-xs-10">
                                         Invalid username/password !!!
                                     </div>
