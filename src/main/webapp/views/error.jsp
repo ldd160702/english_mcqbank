@@ -7,5 +7,6 @@
 </head>
 <body>
   <h1>Something went wrong!</h1>
+  <a href="${pageContext.request.contextPath}/index">Back to the home page</a>
 </body>
 </html>

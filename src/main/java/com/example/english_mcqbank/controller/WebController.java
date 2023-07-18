@@ -26,7 +26,14 @@ public class WebController {
     @RequestMapping(value = {"/", "/home", "/index"})
     public ModelAndView homepage(Authentication authentication) {
         if (authentication != null && authentication.isAuthenticated()) {
-            return new ModelAndView("redirect:/main");
+            UserEntity user = userService.getUserByUsername(authentication.getName());
+            if (user != null) {
+                if (user.getRoles()[0].equals("ROLE_ADMIN")) {
+                    return new ModelAndView("redirect:/admin");
+                } else if (user.getRoles()[0].equals("ROLE_USER")) {
+                    return new ModelAndView("redirect:/user");
+                }
+            }
         }
 
         return new ModelAndView("index"); // Trả về index.jsp
