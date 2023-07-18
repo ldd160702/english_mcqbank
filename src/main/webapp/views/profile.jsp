@@ -24,6 +24,7 @@
 </ul>
 <hr>
 <a href="${pageContext.request.contextPath}/user/profile/edit">Edit</a>
+<a href="${pageContext.request.contextPath}/user/profile/change-password">Change Password</a>
 <div>
     <c:if test="${not empty successMessage}">
         <div class="error"> <strong>${successMessage}</strong> </div>

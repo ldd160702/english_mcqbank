@@ -7,11 +7,13 @@ import com.example.english_mcqbank.service.LogService;
 import com.example.english_mcqbank.service.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -22,6 +24,7 @@ import java.util.List;
 public class WebController {
     final UserDetailsServiceImpl userService;
     final LogService logService;
+    final PasswordEncoder passwordEncoder;
 
     @RequestMapping(value = {"/", "/home", "/index"})
     public ModelAndView homepage(Authentication authentication) {
@@ -94,6 +97,37 @@ public class WebController {
         return editUserModelAndView; // Trả về user.jsp
     }
 
+    @RequestMapping(value = "/user/profile/change-password", method = RequestMethod.GET)
+    public ModelAndView changePassword() {
+        ModelAndView changePasswordModelAndView = new ModelAndView("change-password");
+
+        return changePasswordModelAndView; // Trả về user.jsp
+    }
+    @RequestMapping(value = "/user/profile/change-password", method = RequestMethod.POST)
+    public ModelAndView changePassword(@RequestParam("oldPassword") String oldPassword,
+                                       @RequestParam("newPassword") String newPassword,
+                                       @RequestParam("confirmNewPassword") String confirmNewPassword,
+                                       Authentication authentication, RedirectAttributes redirectAttributes) {
+        String username = authentication.getName();
+        UserEntity user = userService.getUserByUsername(username);
+        boolean check = passwordEncoder.matches(oldPassword, user.getPassword());
+        if (!check) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Incorrect password!");
+            return new ModelAndView("redirect://user/profile/change-password");
+        }
+
+        if (newPassword.equals(confirmNewPassword)) {
+            user.setPassword(passwordEncoder.encode(newPassword));
+            userService.saveUser(user);
+            redirectAttributes.addFlashAttribute("successMessage", "Update Password successfully!");
+            return new ModelAndView("redirect:/user/profile");
+        }
+
+        redirectAttributes.addFlashAttribute("errorMessage", "Password and Confirm Password do not match!");
+
+        return new ModelAndView("redirect://user/profile/change-password");
+    }
+
     @RequestMapping(value = "/user/profile/edit", method = RequestMethod.POST)
     public ModelAndView editUserProfile(Authentication authentication,
                                         @ModelAttribute("currentUser") UserEntity user,
@@ -126,7 +160,6 @@ public class WebController {
             redirectAttributes.addFlashAttribute("successMessage", "Update profile successfully!");
             return new ModelAndView("redirect:/user/profile");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Update profile failed!");
             return editUserModelAndView;
         }
     }
