@@ -41,5 +41,7 @@
             </tr>
         </c:forEach>
     </table>
+
+    <a href="${pageContext.request.contextPath}/user/profile">Back</a>
 </body>
 </html>

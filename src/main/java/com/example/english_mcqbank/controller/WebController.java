@@ -113,7 +113,7 @@ public class WebController {
         boolean check = passwordEncoder.matches(oldPassword, user.getPassword());
         if (!check) {
             redirectAttributes.addFlashAttribute("errorMessage", "Incorrect password!");
-            return new ModelAndView("redirect://user/profile/change-password");
+            return new ModelAndView("redirect:/user/profile/change-password");
         }
 
         if (newPassword.equals(confirmNewPassword)) {
@@ -125,7 +125,7 @@ public class WebController {
 
         redirectAttributes.addFlashAttribute("errorMessage", "Password and Confirm Password do not match!");
 
-        return new ModelAndView("redirect://user/profile/change-password");
+        return new ModelAndView("redirect:/user/profile/change-password");
     }
 
     @RequestMapping(value = "/user/profile/edit", method = RequestMethod.POST)

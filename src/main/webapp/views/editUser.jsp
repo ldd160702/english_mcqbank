@@ -52,5 +52,7 @@
   </div>
 
 </form:form>
+<a href="${pageContext.request.contextPath}/user/profile">Back</a>
+
 </body>
 </html>

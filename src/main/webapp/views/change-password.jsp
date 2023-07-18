@@ -13,6 +13,7 @@
     <title>Change Password</title>
 </head>
 <body>
+<h1>Change Password</h1>
   <form:form action="${pageContext.request.contextPath}/user/profile/change-password" method="post">
     <div>
       <label for="oldPassword">Old password:</label>
@@ -38,5 +39,7 @@
     </c:if>
   </div>
   </form:form>
+<a href="${pageContext.request.contextPath}/user/profile">Back</a>
+
 </body>
 </html>
