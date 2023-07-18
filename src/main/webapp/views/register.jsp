@@ -56,6 +56,6 @@
 
 </form:form>
 <hr>
-<a href="/home">Back</a> or <a href="/login">Login</a>
+<a href="/home">Back</a> or <a href="/login-page">Login</a>
 </body>
 </html>
