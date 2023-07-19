@@ -112,20 +112,28 @@ public class WebController {
         UserEntity user = userService.getUserByUsername(username);
         boolean check = passwordEncoder.matches(oldPassword, user.getPassword());
         if (!check) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Incorrect password!");
-            return new ModelAndView("redirect:/user/profile/change-password");
+            //redirectAttributes.addFlashAttribute("errorMessage", "Incorrect password!");
+            ModelAndView view = new ModelAndView("change-password");
+            view.addObject("errorMessage", "Incorrect password!");
+            //return new ModelAndView("redirect:/user/profile/change-password");
+            return view;
         }
 
         if (newPassword.equals(confirmNewPassword)) {
             user.setPassword(passwordEncoder.encode(newPassword));
             userService.saveUser(user);
-            redirectAttributes.addFlashAttribute("successMessage", "Update Password successfully!");
-            return new ModelAndView("redirect:/user/profile");
+            //redirectAttributes.addFlashAttribute("successMessage", "Update Password successfully!");
+            ModelAndView view = new ModelAndView("profile");
+            view.addObject("successMessage", "Update Password successfully!");
+            return view;
         }
 
-        redirectAttributes.addFlashAttribute("errorMessage", "Password and Confirm Password do not match!");
-
-        return new ModelAndView("redirect:/user/profile/change-password");
+//        redirectAttributes.addFlashAttribute("errorMessage", "Password and Confirm Password do not match!");
+//
+//        return new ModelAndView("redirect:/user/profile/change-password");
+        ModelAndView view = new ModelAndView("change-password");
+        view.addObject("errorMessage", "Password and Confirm Password do not match!");
+        return view;
     }
 
     @RequestMapping(value = "/user/profile/edit", method = RequestMethod.POST)
@@ -136,19 +144,22 @@ public class WebController {
         String username = authentication.getName();
         UserEntity userEntity = userService.getUserByUsername(username);
         if (userEntity == null) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Update profile failed!");
-            return new ModelAndView("redirect:/user/profile");
+            ModelAndView view = new ModelAndView("profile");
+            view.addObject("errorMessage", "User not found!");
+            return view;
         }
 
         userEntity.setFullName(user.getFullName());
         if (!user.getEmail().equals(userEntity.getEmail()) && userService.isEmailPresent(user.getEmail())) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Email is already in use!");
+            //redirectAttributes.addFlashAttribute("errorMessage", "Email is already in use!");
+            editUserModelAndView.addObject("errorMessage", "Email is already in use!");
             return editUserModelAndView;
         } else {
             userEntity.setEmail(user.getEmail());
         }
         if (!user.getPhone().equals(userEntity.getPhone()) && userService.isPhonePresent(user.getPhone())) {
-            redirectAttributes.addFlashAttribute("errorMessage", "Phone is already in use!");
+            //redirectAttributes.addFlashAttribute("errorMessage", "Phone is already in use!");
+            editUserModelAndView.addObject("errorMessage", "Phone is already in use!");
             return editUserModelAndView;
         } else {
             userEntity.setPhone(user.getPhone());
@@ -157,8 +168,11 @@ public class WebController {
 
         try {
             userService.saveUser(userEntity);
-            redirectAttributes.addFlashAttribute("successMessage", "Update profile successfully!");
-            return new ModelAndView("redirect:/user/profile");
+            //redirectAttributes.addFlashAttribute("successMessage", "Update profile successfully!");
+            ModelAndView view = new ModelAndView("profile");
+            view.addObject("successMessage", "Update profile successfully!");
+            return view;
+            //return new ModelAndView("redirect:/user/profile");
         } catch (Exception e) {
             return editUserModelAndView;
         }

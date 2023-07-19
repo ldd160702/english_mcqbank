@@ -4,6 +4,7 @@ import com.example.english_mcqbank.model.Log;
 import com.example.english_mcqbank.model.UserEntity;
 import com.example.english_mcqbank.service.LogService;
 import com.example.english_mcqbank.service.UserDetailsServiceImpl;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.DefaultRedirectStrategy;
@@ -17,12 +18,13 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 @Component
+@RequiredArgsConstructor
 public class CustomAuthenticationFailureHandler implements AuthenticationFailureHandler {
-    @Autowired
+    final
     LogService logService;
-    @Autowired
+    final
     UserDetailsServiceImpl userDetailsService;
-    private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
+    private final RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
 
     @Override
     public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response, AuthenticationException exception) throws IOException, ServletException, IOException {
