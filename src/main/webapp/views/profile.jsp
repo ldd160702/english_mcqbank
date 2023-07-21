@@ -26,8 +26,11 @@
 <a href="${pageContext.request.contextPath}/user/profile/edit">Edit</a>
 <a href="${pageContext.request.contextPath}/user/profile/change-password">Change Password</a>
 <div>
-    <c:if test="${not empty successMessage}">
+    <c:if test="${successMessage != null}">
         <div class="error"> <strong>${successMessage}</strong> </div>
+    </c:if>
+    <c:if test="${param.successMessage != null}">
+        <div class="error"> <strong>${param.successMessage}</strong> </div>
     </c:if>
     <c:if test="${not empty errorMessage}">
         <div class="error"> <strong>${errorMessage}</strong> </div>

@@ -39,4 +39,10 @@ public class LogService {
     public void deleteAllLog(List<Log> logs) {
         logRepository.deleteAll(logs);
     }
+
+    public List<Log> getLogsByUser(UserEntity user, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Log> logPage = logRepository.findAllByUser(user, pageable);
+        return logPage.getContent();
+    }
 }

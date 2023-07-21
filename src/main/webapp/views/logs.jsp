@@ -12,35 +12,36 @@
     <title>User Logs</title>
 </head>
 <body>
-    <table border="1">
+<h1>All user's log</h1>
+<hr>
+<table border="1">
+    <tr>
+        <th>Log ID</th>
+        <th>Log Name</th>
+        <th>Log Status</th>
+        <th>Log Date</th>
+        <th>User</th>
+    </tr>
+    <c:forEach items="${logs}" var="log">
         <tr>
-            <th>ID</th>
-            <th>Action</th>
-            <th>Status</th>
-            <th>Time</th>
-            <th>User</th>
+            <td>${log.id}</td>
+            <td>${log.name}</td>
+            <td>
+                <c:if test="${log.status == 1}">Success</c:if>
+                <c:if test="${log.status == 0}">Failed</c:if>
+            </td>
+            <td>${log.datetime}</td>
+            <td>${log.user.username}</td>
         </tr>
-        <c:forEach var="log" items="${logs}">
-            <tr>
-                <td>${log.id}</td>
-                <td>${log.name}</td>
-                <td>
-                    <c:if test="${log.status == 1}">
-                        Success
-                    </c:if>
-                    <c:if test="${log.status == 0}">
-                        Fail
-                    </c:if>
-                </td>
-                <td>${log.datetime}</td>
-                <td>
-                    <c:if test="${log.user != null}">
-                        ${log.user.username}
-                    </c:if>
-                </td>
-            </tr>
-        </c:forEach>
-    </table>
+    </c:forEach>
+</table>
+<c:if test="${currentPage > 0}">
+    <a href="?page=${currentPage - 1}">Prev</a>
+</c:if>
+<c:if test="${hasNext}">
+    <a href="?page=${currentPage + 1}">Next</a>
+</c:if>
+<hr>
 
     <a href="${pageContext.request.contextPath}/user/profile">Back</a>
 </body>
