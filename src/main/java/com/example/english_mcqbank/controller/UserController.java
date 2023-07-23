@@ -24,6 +24,7 @@ public class UserController {
     final UserDetailsServiceImpl userService;
     final LogService logService;
     final PasswordEncoder passwordEncoder;
+
     @RequestMapping("/user/profile")
     public ModelAndView userProfile(Authentication authentication) {
         ModelAndView userProfileModelAndView = new ModelAndView("profile");
