@@ -11,10 +11,22 @@ import java.util.List;
 public interface QuestionRepository extends JpaRepository<Question, Integer> {
 
     @Query(value = "SELECT * FROM " +
-            "(SELECT * FROM QUESTIONS WHERE TP_ID = :topicId ORDER BY DBMS_RANDOM.VALUE()) " +
+            "(SELECT * FROM QUESTIONS WHERE TP_ID = :topicId AND DIFFICULT_LEVEL = :level ORDER BY DBMS_RANDOM.VALUE()) " +
             "where ROWNUM <= :sampleSize",
              nativeQuery = true)
+    List<Question> findRandomQuestions(int topicId, int level, int sampleSize);
+
+    @Query(value = "SELECT * FROM " +
+            "(SELECT * FROM QUESTIONS WHERE TP_ID = :topicId ORDER BY DBMS_RANDOM.VALUE()) " +
+            "where ROWNUM <= :sampleSize",
+            nativeQuery = true)
     List<Question> findRandomQuestions(int topicId, int sampleSize);
+
+    @Query(value = "SELECT * FROM " +
+            "(SELECT * FROM QUESTIONS ORDER BY DBMS_RANDOM.VALUE()) " +
+            "where ROWNUM <= :sampleSize",
+            nativeQuery = true)
+    List<Question> findRandomQuestions(int sampleSize);
 
     List<Question> findByTopicId(int topicId);
 

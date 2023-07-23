@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,10 +20,16 @@ public class QuestionController {
     @Autowired
     private QuestionService questionService;
 
+    private Map<Integer, Question> questionMap = new HashMap<>();
+
     @RequestMapping("/list")
     public ModelAndView list() {
         ModelAndView modelAndView = new ModelAndView("questionList");
-        List<Question> questions = questionService.getRandom(1, 1, 10);
+        List<Question> questions = questionService.getRandom(0, 0, 5);
+        questionMap = new HashMap<>();
+        for (Question question : questions) {
+            questionMap.put(question.getId(), question);
+        }
         //for (Question question : questions) {
           //  System.out.println(question);
         //}
@@ -38,11 +45,13 @@ public class QuestionController {
         // Process the submitted form data
         Integer score = 0;
         int totalQuestions = 0;
+        // sort question by id
 
         for (String paramName : params.keySet()) {
             if (paramName.startsWith("question_")) {
                 int questionId = Integer.parseInt(paramName.substring("question_".length()));
-                Question question = questionService.get(questionId);
+                //Question question = questionService.get(questionId);
+                Question question = questionMap.get(questionId);
                 String selectedOption = params.get(paramName);
                 // Do something with the selected option for each question (e.g., save to database)
                 if (selectedOption.equals(question.getCorrectAnswer())) {
@@ -57,6 +66,7 @@ public class QuestionController {
         ModelAndView modelAndView = new ModelAndView("resultPage");
         modelAndView.addObject("score", score);
         modelAndView.addObject("totalQuestions", totalQuestions);
+
         return modelAndView;
     }
 

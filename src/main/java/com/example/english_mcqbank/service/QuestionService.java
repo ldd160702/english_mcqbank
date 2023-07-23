@@ -37,7 +37,15 @@ public class QuestionService {
     }
 
     public List<Question> getRandom(int topicId, int level, int number) {
-        return questionRepository.findRandomQuestions(topicId, number);
+        if (topicId <= 0) {
+            return questionRepository.findRandomQuestions(number);
+        }
+
+        if (level <= 0) {
+            return questionRepository.findRandomQuestions(topicId, number);
+        }
+
+        return questionRepository.findRandomQuestions(topicId, level, number);
     }
 
 }
