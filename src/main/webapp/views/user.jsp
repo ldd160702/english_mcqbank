@@ -9,6 +9,9 @@
     <h1>User role</h1>
     <h3><a href="/user/profile">User Information</a></h3>
     <hr>
+    <a href="${pageContext.request.contextPath}/question/list">Test</a>
+    <hr>
+
 <%--    <a href="${pageContext.request.contextPath}/main">Back to the homepage</a>--%>
     <form:form action="${pageContext.request.contextPath}/logout" method="post">
         <%--    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}">--%>

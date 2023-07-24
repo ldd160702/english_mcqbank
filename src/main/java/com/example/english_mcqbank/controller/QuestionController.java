@@ -1,18 +1,20 @@
 package com.example.english_mcqbank.controller;
 
 import com.example.english_mcqbank.model.Question;
+import com.example.english_mcqbank.model.Result;
+import com.example.english_mcqbank.model.UserEntity;
 import com.example.english_mcqbank.service.QuestionService;
+import com.example.english_mcqbank.service.ResultService;
+import com.example.english_mcqbank.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping("/questions")
@@ -20,12 +22,18 @@ public class QuestionController {
     @Autowired
     private QuestionService questionService;
 
-    private Map<Integer, Question> questionMap = new HashMap<>();
+    @Autowired
+    private ResultService resultService;
+
+    @Autowired
+    private UserDetailsServiceImpl userService;
+
+    private Map<Integer, Question> questionMap;
 
     @RequestMapping("/list")
     public ModelAndView list() {
         ModelAndView modelAndView = new ModelAndView("questionList");
-        List<Question> questions = questionService.getRandom(0, 0, 5);
+        List<Question> questions = questionService.getRandom(1, 0, 5);
         questionMap = new HashMap<>();
         for (Question question : questions) {
             questionMap.put(question.getId(), question);
@@ -34,6 +42,7 @@ public class QuestionController {
           //  System.out.println(question);
         //}
         modelAndView.addObject("questions", questions);
+        modelAndView.addObject("examId", 1);
         return modelAndView;
     }
 
@@ -41,7 +50,7 @@ public class QuestionController {
 
 
     @PostMapping("/submit")
-    public ModelAndView submitAnswers(@RequestParam Map<String, String> params) {
+    public ModelAndView submitAnswers(@RequestParam Map<String, String> params, Authentication authentication) {
         // Process the submitted form data
         Integer score = 0;
         int totalQuestions = 0;
@@ -66,7 +75,15 @@ public class QuestionController {
         ModelAndView modelAndView = new ModelAndView("resultPage");
         modelAndView.addObject("score", score);
         modelAndView.addObject("totalQuestions", totalQuestions);
+        questionMap.clear();
 
+        UserEntity user = userService.getUserByUsername(authentication.getName());
+        Result result = new Result();
+        result.setScore(score);
+        result.setTime(new Date());
+        result.setExamId(1);
+        user.addResult(result);
+        userService.saveUser(user);
         return modelAndView;
     }
 

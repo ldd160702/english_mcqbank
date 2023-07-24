@@ -32,6 +32,7 @@
             <br><br>
         </div>
     </c:forEach>
+    <input type="hidden" name="examId" value="${examId}">
     <input type="submit" value="Submit">
 </form:form>
 

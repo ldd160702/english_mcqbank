@@ -57,6 +57,8 @@ public class UserEntity {
 //    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 //    private List<Log> logs = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    private List<Result> results;
 
     public UserEntity(String username, String password, String fullName, String address, String phone, String email, int status, int groupId) {
         this.username = username;
@@ -79,5 +81,13 @@ public class UserEntity {
 
     public boolean isEnabled() {
         return this.status == 1;
+    }
+
+    public void addResult(Result result) {
+        if (results == null) {
+            results = new ArrayList<>();
+        }
+        result.setUser(this);
+        results.add(result);
     }
 }
