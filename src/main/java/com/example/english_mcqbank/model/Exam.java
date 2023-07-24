@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "exams")
@@ -31,4 +32,8 @@ public class Exam {
 
     @Column(name = "ex_time")
     private Date time;
+
+    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JoinColumn(name = "ex_id")
+    private List<Result> resultList;
 }

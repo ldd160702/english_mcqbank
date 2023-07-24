@@ -3,6 +3,7 @@ package com.example.english_mcqbank.controller;
 
 import com.example.english_mcqbank.model.Log;
 import com.example.english_mcqbank.model.UserEntity;
+import com.example.english_mcqbank.service.ExamService;
 import com.example.english_mcqbank.service.LogService;
 import com.example.english_mcqbank.service.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ import java.util.List;
 public class WebController {
     final UserDetailsServiceImpl userService;
     final LogService logService;
+    final ExamService examService;
     final PasswordEncoder passwordEncoder;
 
     @RequestMapping(value = {"/", "/home", "/index"})

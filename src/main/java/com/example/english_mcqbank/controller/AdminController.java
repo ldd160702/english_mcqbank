@@ -1,9 +1,13 @@
 package com.example.english_mcqbank.controller;
 
 
+import com.example.english_mcqbank.model.Exam;
 import com.example.english_mcqbank.model.Log;
+import com.example.english_mcqbank.model.Topic;
 import com.example.english_mcqbank.model.UserEntity;
+import com.example.english_mcqbank.service.ExamService;
 import com.example.english_mcqbank.service.LogService;
+import com.example.english_mcqbank.service.TopicService;
 import com.example.english_mcqbank.service.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,7 +28,9 @@ import java.util.List;
 public class AdminController {
     final UserDetailsServiceImpl userService;
     final LogService logService;
+    final TopicService topicService;
     final PasswordEncoder passwordEncoder;
+    final ExamService examService;
 
     @RequestMapping(value = "/admin/addUser", method = RequestMethod.GET)
     public String addUser(Model model) {
@@ -111,6 +117,42 @@ public class AdminController {
         boolean hasNext = logs.size() >= size;
         modelAndView.addObject("hasNext", hasNext);
 
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/admin/addExam", method = RequestMethod.GET)
+    public ModelAndView addExam() {
+        List<Topic> topics = topicService.getAllTopics();
+        ModelAndView modelAndView = new ModelAndView("addExam");
+        modelAndView.addObject("topics", topics);
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/admin/addExam", method = RequestMethod.POST)
+    public ModelAndView addExam(@RequestParam("questionNo") String questionNo,
+                                @RequestParam("topicId") int topicId,
+                                RedirectAttributes redirectAttributes) {
+        try {
+            Exam exam = new Exam();
+            exam.setQuestionNo(Integer.parseInt(questionNo));
+            exam.setTopicId(topicId);
+            exam.setTime(new Date());
+            exam.setPercent(0);
+            examService.saveExam(exam);
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("message", "Error adding exam");
+            return new ModelAndView("redirect:/admin");
+        }
+        ModelAndView modelAndView1 = new ModelAndView("redirect:/admin/exams");
+        redirectAttributes.addFlashAttribute("message", "Exam added successfully");
+        return modelAndView1;
+    }
+
+    @RequestMapping(value = "/admin/exams", method = RequestMethod.GET)
+    public ModelAndView exams() {
+        ModelAndView modelAndView = new ModelAndView("exams");
+        List<Exam> exams = examService.getAllExams();
+        modelAndView.addObject("exams", exams);
         return modelAndView;
     }
 }

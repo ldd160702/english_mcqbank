@@ -28,10 +28,22 @@ public class Result {
     private Date time;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_us_id")
+    @JoinColumn(name = "us_id")
     @JsonIgnore
     private UserEntity user;
 
-    @Column(name = "exam_ex_id")
-    private Integer examId;
+//    @Column(name = "exam_ex_id")
+//    private Integer examId;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "ex_id")
+    private Exam exam;
+
+    public void setExamId(Integer examId) {
+        exam.setId(examId);
+    }
+
+    public int getExamId() {
+        return exam.getId();
+    }
 }

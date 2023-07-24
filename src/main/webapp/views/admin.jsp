@@ -45,6 +45,9 @@
 
 <hr>
 <h3><a href="${pageContext.request.contextPath}/admin/addUser">Add user</a> </h3>
+<hr>
+<h3><a href="${pageContext.request.contextPath}/admin/exams">All Exam</a> </h3>
+<hr>
 <c:if test="${not empty message}">
     <div class="message">${message}</div>
 </c:if>

@@ -28,29 +28,30 @@ public class QuestionController {
     @Autowired
     private UserDetailsServiceImpl userService;
 
-    private Map<Integer, Question> questionMap;
-
-    @RequestMapping("/list")
-    public ModelAndView list() {
-        ModelAndView modelAndView = new ModelAndView("questionList");
-        List<Question> questions = questionService.getRandom(1, 0, 5);
-        questionMap = new HashMap<>();
-        for (Question question : questions) {
-            questionMap.put(question.getId(), question);
-        }
-        //for (Question question : questions) {
-          //  System.out.println(question);
-        //}
-        modelAndView.addObject("questions", questions);
-        modelAndView.addObject("examId", 1);
-        return modelAndView;
-    }
+//    private Map<Integer, Question> questionMap;
+//
+//    @RequestMapping("/list")
+//    public ModelAndView list() {
+//        ModelAndView modelAndView = new ModelAndView("questionList");
+//        List<Question> questions = questionService.getRandom(1, 0, 5);
+////        questionMap = new HashMap<>();
+////        for (Question question : questions) {
+////            questionMap.put(question.getId(), question);
+////        }
+//        //for (Question question : questions) {
+//          //  System.out.println(question);
+//        //}
+//        modelAndView.addObject("questions", questions);
+//        modelAndView.addObject("examId", 1);
+//        return modelAndView;
+//    }
 
 
 
 
     @PostMapping("/submit")
-    public ModelAndView submitAnswers(@RequestParam Map<String, String> params, Authentication authentication) {
+    public ModelAndView submitAnswers(@RequestParam Map<String, String> params, Authentication authentication,
+                                      @RequestParam("examId") int examId) {
         // Process the submitted form data
         Integer score = 0;
         int totalQuestions = 0;
@@ -59,8 +60,8 @@ public class QuestionController {
         for (String paramName : params.keySet()) {
             if (paramName.startsWith("question_")) {
                 int questionId = Integer.parseInt(paramName.substring("question_".length()));
-                //Question question = questionService.get(questionId);
-                Question question = questionMap.get(questionId);
+                Question question = questionService.get(questionId);
+                //Question question = questionMap.get(questionId);
                 String selectedOption = params.get(paramName);
                 // Do something with the selected option for each question (e.g., save to database)
                 if (selectedOption.equals(question.getCorrectAnswer())) {
@@ -75,13 +76,13 @@ public class QuestionController {
         ModelAndView modelAndView = new ModelAndView("resultPage");
         modelAndView.addObject("score", score);
         modelAndView.addObject("totalQuestions", totalQuestions);
-        questionMap.clear();
+        //questionMap.clear();
 
         UserEntity user = userService.getUserByUsername(authentication.getName());
         Result result = new Result();
         result.setScore(score);
         result.setTime(new Date());
-        result.setExamId(1);
+        result.setExamId(examId);
         user.addResult(result);
         userService.saveUser(user);
         return modelAndView;

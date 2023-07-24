@@ -1,29 +1,31 @@
 package com.example.english_mcqbank.controller;
 
-import com.example.english_mcqbank.model.Log;
-import com.example.english_mcqbank.model.UserEntity;
-import com.example.english_mcqbank.service.LogService;
-import com.example.english_mcqbank.service.UserDetailsServiceImpl;
+import com.example.english_mcqbank.model.*;
+import com.example.english_mcqbank.service.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
 public class UserController {
     final UserDetailsServiceImpl userService;
     final LogService logService;
+    final ExamService examService;
+    final QuestionService questionService;
+    final ResultService resultService;
     final PasswordEncoder passwordEncoder;
+    private Map<Integer, Question> questionMap;
 
     @RequestMapping("/user/profile")
     public ModelAndView userProfile(Authentication authentication) {
@@ -146,5 +148,94 @@ public class UserController {
         } catch (Exception e) {
             return editUserModelAndView;
         }
+    }
+
+    @RequestMapping("/user/exams")
+    public ModelAndView userExams(Authentication authentication) {
+        List<Exam> exams = examService.getAllExams();
+        ModelAndView userExamsModelAndView = new ModelAndView("exams");
+        userExamsModelAndView.addObject("exams", exams);
+        return userExamsModelAndView; // Trả về user.jsp
+    }
+
+    @RequestMapping("/user/exams/{id}")
+    public ModelAndView userExam(@PathVariable int id, Authentication authentication) {
+        ModelAndView userExamModelAndView = new ModelAndView("questionList");
+        Exam exam = examService.getExamById(id);
+        if (exam == null) {
+            return new ModelAndView("redirect:/user/exams");
+        }
+        int topicId = exam.getTopicId();
+        int questionCount = exam.getQuestionNo();
+        List<Question> questions = questionService.getRandom(topicId, 0, questionCount);
+        questionMap = new HashMap<>();
+        for (Question question : questions) {
+            questionMap.put(question.getId(), question);
+        }
+        userExamModelAndView.addObject("questions", questions);
+        userExamModelAndView.addObject("examId", exam.getId());
+        return userExamModelAndView; // Trả về user.jsp
+    }
+
+    @PostMapping("/user/exams/submit")
+    public ModelAndView submitAnswers(@RequestParam Map<String, String> params, Authentication authentication,
+                                      @RequestParam("examId") int examId) {
+        // Process the submitted form data
+        Integer score = 0;
+        int totalQuestions = 0;
+        // sort question by id
+
+        for (String paramName : params.keySet()) {
+            if (paramName.startsWith("question_")) {
+                int questionId = Integer.parseInt(paramName.substring("question_".length()));
+                //Question question = questionService.get(questionId);
+                Question question = questionMap.get(questionId);
+                String selectedOption = params.get(paramName);
+                // Do something with the selected option for each question (e.g., save to database)
+                if (selectedOption.equals(question.getCorrectAnswer())) {
+                    score++;
+                }
+                //System.out.println("Question " + questionId + ": Selected Option: " + selectedOption);
+                totalQuestions++;
+            }
+
+        }
+
+        // Redirect or return a response as needed
+        ModelAndView modelAndView = new ModelAndView("resultPage");
+        modelAndView.addObject("score", score);
+        modelAndView.addObject("totalQuestions", totalQuestions);
+        questionMap.clear();
+
+        UserEntity user = userService.getUserByUsername(authentication.getName());
+        Result result = new Result();
+        result.setScore(score);
+        result.setTime(new Date());
+        //result.setExamId(examId);
+        result.setExam(examService.getExamById(examId));
+        user.addResult(result);
+        userService.saveUser(user);
+        return modelAndView;
+    }
+
+    @RequestMapping("/user/results")
+    public ModelAndView userResult(Authentication authentication,
+                                   @RequestParam(defaultValue = "0") int page,
+                                   @RequestParam(defaultValue = "5") int size) {
+        ModelAndView userResultModelAndView = new ModelAndView("userResult");
+        String username = authentication.getName();
+        UserEntity user = userService.getUserByUsername(username);
+        if (user == null) {
+            return new ModelAndView("redirect:/user/profile");
+        }
+        //List<Result> results = user.getResults();
+        List<Result> results = resultService.findAllByUser(user, page, size);
+        userResultModelAndView.addObject("results", results);
+        userResultModelAndView.addObject("currentPage", page);
+        assert results != null;
+        boolean hasNext = results.size() >= size;
+        userResultModelAndView.addObject("hasNext", hasNext);
+        userResultModelAndView.addObject("user", user);
+        return userResultModelAndView; // Trả về user.jsp
     }
 }
