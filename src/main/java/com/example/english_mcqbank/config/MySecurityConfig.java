@@ -24,7 +24,8 @@ public class MySecurityConfig {
     private CustomAuthenticationSuccessHandler authenticationSuccessHandler;
     @Autowired
     private CustomAuthenticationFailureHandler authenticationFailureHandler;
-
+    @Autowired
+    private CustomLogoutSuccessHandler logoutSuccessHandler;
 
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
@@ -53,6 +54,7 @@ public class MySecurityConfig {
                 .permitAll() // Tất cả đều được truy cập vào địa chỉ này
                 .and()
                 .logout() // Cho phép logout
+                .logoutSuccessHandler(logoutSuccessHandler)
                 //.logoutSuccessUrl("/login-page")
                 .invalidateHttpSession(true)
                 .deleteCookies("JSESSIONID")
@@ -71,14 +73,5 @@ public class MySecurityConfig {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
-    public UserEntity loggedInUser() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null) {
-            return null;
-        }
-        String username = authentication.getName();
-        return userDetailsService.getUserByUsername(username);
-    }
 }
 

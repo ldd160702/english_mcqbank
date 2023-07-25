@@ -1,4 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%--
   Created by IntelliJ IDEA.
   User: Duc
@@ -12,7 +13,7 @@
     <title>Title</title>
 </head>
 <body>
-<h1>${user.fullName}'s result</h1>
+<h1>${title}</h1>
 <hr>
 <table border="1">
     <tr>
@@ -39,7 +40,13 @@
     <a href="?page=${currentPage + 1}">Next</a>
 </c:if>
 <hr>
+<sec:authorize access="hasRole('ROLE_ADMIN')">
+    <a href="${pageContext.request.contextPath}/admin/exams">Back</a>
+</sec:authorize>
+<sec:authorize access="hasRole('ROLE_USER')">
+    <a href="${pageContext.request.contextPath}/user">Back</a>
+</sec:authorize>
 
-<a href="${pageContext.request.contextPath}/user/profile">Back</a>
+
 </body>
 </html>

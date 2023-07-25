@@ -58,6 +58,7 @@ public class UserEntity {
 //    private List<Log> logs = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JsonIgnore
     private List<Result> results;
 
     public UserEntity(String username, String password, String fullName, String address, String phone, String email, int status, int groupId) {

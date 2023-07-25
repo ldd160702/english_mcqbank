@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,6 +29,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         if (user == null) {
             throw new UsernameNotFoundException("User not found");
         }
+
+        //System.out.println("User: " + user.getUsername() + " " + user.getPassword() + " " + user.isEnabled() + " " + Arrays.toString(user.getRoles()));
 
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),

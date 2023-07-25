@@ -2,9 +2,13 @@ package com.example.english_mcqbank.config;
 
 import com.example.english_mcqbank.model.Log;
 import com.example.english_mcqbank.model.UserEntity;
+import com.example.english_mcqbank.model.test.Child1;
+import com.example.english_mcqbank.model.test.Parent;
 import com.example.english_mcqbank.service.LogService;
+import com.example.english_mcqbank.service.LoggedInUserService;
 import com.example.english_mcqbank.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -23,11 +27,16 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     LogService logService;
     @Autowired
     UserDetailsServiceImpl userDetailsService;
+    @Autowired
+    LoggedInUserService loggedInUserService;
+
+    UserEntity loggedInUser;
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         Set<String> roles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());
         Log log = new Log();
         UserEntity user = userDetailsService.getUserByUsername(authentication.getName());
+        loggedInUserService.setLoggedInUser(user);
         log.setUser(user);
         log.setDatetime(new Date());
         if (roles.contains("ROLE_ADMIN")) {
@@ -46,6 +55,11 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
             logService.saveLog(log);
             response.sendRedirect("/main");
         }
+    }
+
+    @Bean
+    public Parent myBean() {
+        return new Child1();
     }
 }
 

@@ -40,8 +40,11 @@
                     </sec:authorize>
                     <sec:authorize access="hasRole('ADMIN')">
                         <li>
-                            <a onclick="if (!confirm('Are you sure to delete this user?')) return false" href="${pageContext.request.contextPath}/admin/delete?exam=${exam.id}">Delete</a>
+                            <a onclick="if (!confirm('Are you sure to delete this exam?')) return false" href="${pageContext.request.contextPath}/admin/deleteExam?examId=${exam.id}">Delete</a>
 
+                        </li>
+                        <li>
+                            <a href="${pageContext.request.contextPath}/admin/results/${exam.id}">All result</a>
                         </li>
                     </sec:authorize>
                 </ul>

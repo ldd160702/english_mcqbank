@@ -1,5 +1,6 @@
 package com.example.english_mcqbank.service;
 
+import com.example.english_mcqbank.model.Exam;
 import com.example.english_mcqbank.model.Result;
 import com.example.english_mcqbank.model.UserEntity;
 import com.example.english_mcqbank.repository.ResultRepository;
@@ -28,5 +29,9 @@ public class ResultService {
         Pageable pageable = PageRequest.of(page, size);
 
         return resultRepository.findAllByUser(user, pageable);
+    }
+
+    public void deleteResultByExam(Exam exam) {
+        resultRepository.deleteAllByExam(exam);
     }
 }

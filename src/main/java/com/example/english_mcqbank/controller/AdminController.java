@@ -1,10 +1,7 @@
 package com.example.english_mcqbank.controller;
 
 
-import com.example.english_mcqbank.model.Exam;
-import com.example.english_mcqbank.model.Log;
-import com.example.english_mcqbank.model.Topic;
-import com.example.english_mcqbank.model.UserEntity;
+import com.example.english_mcqbank.model.*;
 import com.example.english_mcqbank.service.ExamService;
 import com.example.english_mcqbank.service.LogService;
 import com.example.english_mcqbank.service.TopicService;
@@ -13,10 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -153,6 +147,38 @@ public class AdminController {
         ModelAndView modelAndView = new ModelAndView("exams");
         List<Exam> exams = examService.getAllExams();
         modelAndView.addObject("exams", exams);
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/admin/deleteExam", method = RequestMethod.GET)
+    public ModelAndView deleteExam(@RequestParam("examId") int id, RedirectAttributes redirectAttributes) {
+        try {
+            Exam exam = examService.getExamById(id);
+            if (exam == null) {
+                redirectAttributes.addFlashAttribute("message", "Exam does not exist");
+                return new ModelAndView("redirect:/admin/exams");
+            }
+            examService.deleteExam(exam);
+            redirectAttributes.addFlashAttribute("message", "Exam deleted successfully");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("message", "Error deleting exam");
+        }
+        return new ModelAndView("redirect:/admin/exams");
+    }
+
+    @RequestMapping(value = "/admin/results/{examId}", method = RequestMethod.GET)
+    public ModelAndView results(@RequestParam(defaultValue = "0") int page,
+                                @RequestParam(defaultValue = "10") int size,
+                                @PathVariable("examId") int examId) {
+        ModelAndView modelAndView = new ModelAndView("userResult");
+        List<Result> results = examService.getResultsByExamId(examId, page, size);
+        modelAndView.addObject("results", results);
+        modelAndView.addObject("title", "All Users results for exam " + examId);
+        modelAndView.addObject("currentPage", page);
+        assert results != null;
+        boolean hasNext = results.size() >= size;
+        modelAndView.addObject("hasNext", hasNext);
+        //modelAndView.addObject("examId", examId);
         return modelAndView;
     }
 }

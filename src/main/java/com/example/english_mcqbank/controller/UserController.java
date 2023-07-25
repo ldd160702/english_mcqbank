@@ -25,14 +25,19 @@ public class UserController {
     final QuestionService questionService;
     final ResultService resultService;
     final PasswordEncoder passwordEncoder;
+    final LoggedInUserService loggedInUserService;
     private Map<Integer, Question> questionMap;
 
     @RequestMapping("/user/profile")
     public ModelAndView userProfile(Authentication authentication) {
         ModelAndView userProfileModelAndView = new ModelAndView("profile");
-        String username = authentication.getName();
-        UserEntity user = userService.getUserByUsername(username);
+        userProfileModelAndView.addObject("successMessage", null);
+        userProfileModelAndView.addObject("errorMessage", null);
+        //String username = authentication.getName();
+        //UserEntity user = userService.getUserByUsername(username);
+        UserEntity user = loggedInUserService.getLoggedInUser();
         userProfileModelAndView.addObject("user", user);
+
         return userProfileModelAndView; // Trả về user.jsp
     }
 
@@ -41,8 +46,9 @@ public class UserController {
                                  @RequestParam(defaultValue = "0") int page,
                                  @RequestParam(defaultValue = "20") int size) {
         ModelAndView userLogsModelAndView = new ModelAndView("logs");
-        String username = authentication.getName();
-        UserEntity user = userService.getUserByUsername(username);
+        //String username = authentication.getName();
+        //UserEntity user = userService.getUserByUsername(username);
+        UserEntity user = loggedInUserService.getLoggedInUser();
         if (user == null) {
             return new ModelAndView("redirect:/user/profile");
         }
@@ -59,8 +65,9 @@ public class UserController {
     @RequestMapping(value = "/user/profile/edit", method = RequestMethod.GET)
     public ModelAndView editUserProfile(Authentication authentication, Model model) {
         ModelAndView editUserModelAndView = new ModelAndView("editUser");
-        String username = authentication.getName();
-        UserEntity user = userService.getUserByUsername(username);
+        //String username = authentication.getName();
+        //UserEntity user = userService.getUserByUsername(username);
+        UserEntity user = loggedInUserService.getLoggedInUser();
         if (user == null) {
             return new ModelAndView("redirect:/user/profile");
         }
@@ -80,8 +87,9 @@ public class UserController {
                                        @RequestParam("newPassword") String newPassword,
                                        @RequestParam("confirmNewPassword") String confirmNewPassword,
                                        Authentication authentication, RedirectAttributes redirectAttributes) {
-        String username = authentication.getName();
-        UserEntity user = userService.getUserByUsername(username);
+        //String username = authentication.getName();
+        //UserEntity user = userService.getUserByUsername(username);
+        UserEntity user = loggedInUserService.getLoggedInUser();
         boolean check = passwordEncoder.matches(oldPassword, user.getPassword());
         if (!check) {
             //redirectAttributes.addFlashAttribute("errorMessage", "Incorrect password!");
@@ -95,7 +103,7 @@ public class UserController {
             user.setPassword(passwordEncoder.encode(newPassword));
             userService.saveUser(user);
             //redirectAttributes.addFlashAttribute("successMessage", "Update Password successfully!");
-            ModelAndView view = new ModelAndView("profile");
+            ModelAndView view = new ModelAndView("redirect:/user/profile");
             view.addObject("successMessage", "Update Password successfully!");
             return view;
         }
@@ -113,8 +121,9 @@ public class UserController {
                                         @ModelAttribute("currentUser") UserEntity user,
                                         RedirectAttributes redirectAttributes) {
         ModelAndView editUserModelAndView = new ModelAndView("editUser");
-        String username = authentication.getName();
-        UserEntity userEntity = userService.getUserByUsername(username);
+        //String username = authentication.getName();
+        //UserEntity userEntity = userService.getUserByUsername(username);
+        UserEntity userEntity = loggedInUserService.getLoggedInUser();
         if (userEntity == null) {
             ModelAndView view = new ModelAndView("profile");
             view.addObject("errorMessage", "User not found!");
@@ -142,6 +151,7 @@ public class UserController {
             userService.saveUser(userEntity);
             //redirectAttributes.addFlashAttribute("successMessage", "Update profile successfully!");
             ModelAndView view = new ModelAndView("redirect:/user/profile");
+            //redirectAttributes.addFlashAttribute("user", userEntity);
             view.addObject("successMessage", "Update profile successfully!");
             return view;
             //return new ModelAndView("redirect:/user/profile");
@@ -151,7 +161,7 @@ public class UserController {
     }
 
     @RequestMapping("/user/exams")
-    public ModelAndView userExams(Authentication authentication) {
+    public ModelAndView userExams() {
         List<Exam> exams = examService.getAllExams();
         ModelAndView userExamsModelAndView = new ModelAndView("exams");
         userExamsModelAndView.addObject("exams", exams);
@@ -159,7 +169,7 @@ public class UserController {
     }
 
     @RequestMapping("/user/exams/{id}")
-    public ModelAndView userExam(@PathVariable int id, Authentication authentication) {
+    public ModelAndView userExam(@PathVariable int id) {
         ModelAndView userExamModelAndView = new ModelAndView("questionList");
         Exam exam = examService.getExamById(id);
         if (exam == null) {
@@ -208,6 +218,7 @@ public class UserController {
         questionMap.clear();
 
         UserEntity user = userService.getUserByUsername(authentication.getName());
+
         Result result = new Result();
         result.setScore(score);
         result.setTime(new Date());
@@ -225,6 +236,7 @@ public class UserController {
         ModelAndView userResultModelAndView = new ModelAndView("userResult");
         String username = authentication.getName();
         UserEntity user = userService.getUserByUsername(username);
+        //UserEntity user = loggedInUserService.getLoggedInUser();
         if (user == null) {
             return new ModelAndView("redirect:/user/profile");
         }
@@ -235,7 +247,8 @@ public class UserController {
         assert results != null;
         boolean hasNext = results.size() >= size;
         userResultModelAndView.addObject("hasNext", hasNext);
-        userResultModelAndView.addObject("user", user);
+        //userResultModelAndView.addObject("user", user);
+        userResultModelAndView.addObject("title", "Results of " + user.getFullName());
         return userResultModelAndView; // Trả về user.jsp
     }
 }

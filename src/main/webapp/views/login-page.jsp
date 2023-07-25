@@ -62,19 +62,25 @@
                                         Invalid username/password !!!
                                     </div>
                                 </c:if>
-                                <c:if test="${errorMessage2 != null}">
-                                    <div class="alert alert-danger col-xs-offset-1 col-xs-10">
-                                        Invalid username/password !!!
-                                    </div>
-                                </c:if>
+<%--                                <c:if test="${errorMessage2 != null}">--%>
+<%--                                    <div class="alert alert-danger col-xs-offset-1 col-xs-10">--%>
+<%--                                        Invalid username/password !!!--%>
+<%--                                    </div>--%>
+<%--                                </c:if>--%>
                                 <c:if test="${param.logout != null}">
                                     <div class="alert alert-success col-xs-offset-1 col-xs-10">
                                         You have been logged out successfully.
                                     </div>
                                 </c:if>
-                                <c:if test="${successMessage != null}">
+<%--                                <c:if test="${successMessage != null}">--%>
+<%--                                    <div class="alert alert-success col-xs-offset-1 col-xs-10">--%>
+<%--                                            ${successMessage}--%>
+<%--                                    </div>--%>
+<%--                                </c:if>--%>
+                                <c:if test="${logoutMessage != null}">
                                     <div class="alert alert-success col-xs-offset-1 col-xs-10">
-                                            ${successMessage}
+                                            ${logoutMessage}
+
                                     </div>
                                 </c:if>
                             </div>
