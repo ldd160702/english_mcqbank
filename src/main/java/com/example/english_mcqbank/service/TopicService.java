@@ -15,4 +15,8 @@ public class TopicService {
     public List<Topic> getAllTopics() {
         return topicRepository.findAll();
     }
+
+    public Topic getTopicById(Integer topicId) {
+        return topicRepository.findById(topicId).orElse(null);
+    }
 }

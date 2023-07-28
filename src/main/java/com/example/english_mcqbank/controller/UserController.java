@@ -25,7 +25,7 @@ public class UserController {
     final QuestionService questionService;
     final ResultService resultService;
     final PasswordEncoder passwordEncoder;
-    final LoggedInUserService loggedInUserService;
+    //final LoggedInUserService loggedInUserService;
     private Map<Integer, Question> questionMap;
 
     @RequestMapping("/user/profile")
@@ -33,9 +33,9 @@ public class UserController {
         ModelAndView userProfileModelAndView = new ModelAndView("profile");
         userProfileModelAndView.addObject("successMessage", null);
         userProfileModelAndView.addObject("errorMessage", null);
-        //String username = authentication.getName();
-        //UserEntity user = userService.getUserByUsername(username);
-        UserEntity user = loggedInUserService.getLoggedInUser();
+        String username = authentication.getName();
+        UserEntity user = userService.getUserByUsername(username);
+        //UserEntity user = loggedInUserService.getLoggedInUser();
         userProfileModelAndView.addObject("user", user);
 
         return userProfileModelAndView; // Trả về user.jsp
@@ -46,9 +46,9 @@ public class UserController {
                                  @RequestParam(defaultValue = "0") int page,
                                  @RequestParam(defaultValue = "20") int size) {
         ModelAndView userLogsModelAndView = new ModelAndView("logs");
-        //String username = authentication.getName();
-        //UserEntity user = userService.getUserByUsername(username);
-        UserEntity user = loggedInUserService.getLoggedInUser();
+        String username = authentication.getName();
+        UserEntity user = userService.getUserByUsername(username);
+        //UserEntity user = loggedInUserService.getLoggedInUser();
         if (user == null) {
             return new ModelAndView("redirect:/user/profile");
         }
@@ -65,9 +65,9 @@ public class UserController {
     @RequestMapping(value = "/user/profile/edit", method = RequestMethod.GET)
     public ModelAndView editUserProfile(Authentication authentication, Model model) {
         ModelAndView editUserModelAndView = new ModelAndView("editUser");
-        //String username = authentication.getName();
-        //UserEntity user = userService.getUserByUsername(username);
-        UserEntity user = loggedInUserService.getLoggedInUser();
+        String username = authentication.getName();
+        UserEntity user = userService.getUserByUsername(username);
+        //UserEntity user = loggedInUserService.getLoggedInUser();
         if (user == null) {
             return new ModelAndView("redirect:/user/profile");
         }
@@ -87,9 +87,9 @@ public class UserController {
                                        @RequestParam("newPassword") String newPassword,
                                        @RequestParam("confirmNewPassword") String confirmNewPassword,
                                        Authentication authentication, RedirectAttributes redirectAttributes) {
-        //String username = authentication.getName();
-        //UserEntity user = userService.getUserByUsername(username);
-        UserEntity user = loggedInUserService.getLoggedInUser();
+        String username = authentication.getName();
+        UserEntity user = userService.getUserByUsername(username);
+        //UserEntity user = loggedInUserService.getLoggedInUser();
         boolean check = passwordEncoder.matches(oldPassword, user.getPassword());
         if (!check) {
             //redirectAttributes.addFlashAttribute("errorMessage", "Incorrect password!");
@@ -121,9 +121,9 @@ public class UserController {
                                         @ModelAttribute("currentUser") UserEntity user,
                                         RedirectAttributes redirectAttributes) {
         ModelAndView editUserModelAndView = new ModelAndView("editUser");
-        //String username = authentication.getName();
-        //UserEntity userEntity = userService.getUserByUsername(username);
-        UserEntity userEntity = loggedInUserService.getLoggedInUser();
+        String username = authentication.getName();
+        UserEntity userEntity = userService.getUserByUsername(username);
+        //UserEntity userEntity = loggedInUserService.getLoggedInUser();
         if (userEntity == null) {
             ModelAndView view = new ModelAndView("profile");
             view.addObject("errorMessage", "User not found!");
@@ -177,6 +177,8 @@ public class UserController {
         }
         int topicId = exam.getTopicId();
         int questionCount = exam.getQuestionNo();
+        List<ExamTopic> examTopics = exam.getExamTopicList();
+
         List<Question> questions = questionService.getRandom(topicId, 0, questionCount);
         questionMap = new HashMap<>();
         for (Question question : questions) {

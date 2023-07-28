@@ -18,6 +18,8 @@
     <thead>
     <tr>
         <th>Exam Id</th>
+        <th>Exam Topics</th>
+        <th>Topics </th>
         <th>Percent</th>
         <th>Question No</th>
         <th>Time</th>
@@ -28,6 +30,33 @@
     <c:forEach var="exam" items="${exams}">
         <tr>
             <td>${exam.id}</td>
+            <td>
+<%--                    <c:forEach var="topic" items="${exam.examTopicList}">--%>
+<%--                        ${topic},--%>
+<%--                    </c:forEach>--%>
+<%--                <c:set var="topicNames" value="" />--%>
+<%--                <c:forEach var="topic" items="${exam.examTopicList}" varStatus="status">--%>
+<%--                    <c:set var="delimiter" value="${not status.first ? ', ' : ''}" />--%>
+<%--                    <c:set var="topicNames" value="${topicNames}${delimiter}${topic.id}" />--%>
+<%--                </c:forEach>--%>
+<%--                    ${topicNames}--%>
+                <ul>
+                    <c:forEach var="exam_topic" items="${exam.examTopicList}">
+                        <c:if test="${not empty exam_topic}">
+                            <li>${exam_topic.id}</li>
+                        </c:if>
+                    </c:forEach>
+                </ul>
+            </td>
+            <td>
+                <ul>
+                    <c:forEach var="exam_topic" items="${exam.examTopicList}">
+                        <c:if test="${not empty exam_topic}">
+                            <li>${exam_topic.topic.id}</li>
+                        </c:if>
+                    </c:forEach>
+                </ul>
+            </td>
             <td>${exam.percent}</td>
             <td>${exam.questionNo}</td>
             <td>${exam.time}</td>

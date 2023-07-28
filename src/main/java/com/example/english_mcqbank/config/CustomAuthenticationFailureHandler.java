@@ -48,7 +48,7 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
         }
 //        System.out.println("Authentication failed for username: " + username);
 //        request.getSession().setAttribute("errorMessage2", "Invalid Username or Password");
-//        request.getSession().setAttribute("logoutMessage", null);
+        request.getSession().setAttribute("logoutMessage", null);
         //redirectStrategy.sendRedirect(request, response, "/login-page?error");
 
 
@@ -61,6 +61,7 @@ public class CustomAuthenticationFailureHandler implements AuthenticationFailure
 //        System.out.println("request.getServletPath(): " + request.getServletPath());
 //        String url = request.getRequestURL().toString().substring(0, request.getRequestURL().toString().length() - request.getRequestURI().length()) + request.getContextPath();
         //System.out.println("url: " + url);
+
         request.getRequestDispatcher("/login-page?error").forward(request, response);
     }
 

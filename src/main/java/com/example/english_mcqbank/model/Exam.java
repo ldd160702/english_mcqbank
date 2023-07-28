@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -33,7 +34,26 @@ public class Exam {
     @Column(name = "ex_time")
     private Date time;
 
-    @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "ex_id")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "exam")
+    //@JoinColumn(name = "ex_id")
     private List<Result> resultList;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "exam")
+    //@JoinColumn(name = "ex_id")
+    private List<ExamTopic> examTopicList;
+
+//    @OneToOne
+//    @JoinColumn(name = "ex_id")
+//    private ExamTopic examTopic;
+    public void addExamTopic(ExamTopic examTopic) {
+        if (examTopicList == null) {
+            examTopicList = new ArrayList<>();
+        }
+
+        if (examTopicList.contains(examTopic)) {
+            return;
+        }
+        examTopic.setExam(this);
+        examTopicList.add(examTopic);
+    }
 }

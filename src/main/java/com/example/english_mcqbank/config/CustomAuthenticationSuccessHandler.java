@@ -27,16 +27,14 @@ public class CustomAuthenticationSuccessHandler implements AuthenticationSuccess
     LogService logService;
     @Autowired
     UserDetailsServiceImpl userDetailsService;
-    @Autowired
-    LoggedInUserService loggedInUserService;
-
-    UserEntity loggedInUser;
+//    @Autowired
+//    LoggedInUserService loggedInUserService;
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
         Set<String> roles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());
         Log log = new Log();
         UserEntity user = userDetailsService.getUserByUsername(authentication.getName());
-        loggedInUserService.setLoggedInUser(user);
+        //loggedInUserService.setLoggedInUser(user);
         log.setUser(user);
         log.setDatetime(new Date());
         if (roles.contains("ROLE_ADMIN")) {

@@ -15,7 +15,9 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequiredArgsConstructor
@@ -122,24 +124,76 @@ public class AdminController {
         return modelAndView;
     }
 
-    @RequestMapping(value = "/admin/addExam", method = RequestMethod.POST)
+//    @RequestMapping(value = "/admin/addExam", method = RequestMethod.POST)
+//    public ModelAndView addExam(@RequestParam("questionNo") String questionNo,
+//                                @RequestParam("topicId") int topicId,
+//                                RedirectAttributes redirectAttributes) {
+//        try {
+//            Exam exam = new Exam();
+//            exam.setQuestionNo(Integer.parseInt(questionNo));
+//            exam.setTopicId(topicId);
+//            exam.setTime(new Date());
+//            exam.setPercent(0);
+//            examService.saveExam(exam);
+//        } catch (Exception e) {
+//            redirectAttributes.addFlashAttribute("message", "Error adding exam");
+//            return new ModelAndView("redirect:/admin");
+//        }
+//        ModelAndView modelAndView1 = new ModelAndView("redirect:/admin/exams");
+//        redirectAttributes.addFlashAttribute("message", "Exam added successfully");
+//        return modelAndView1;
+//    }
+
+    @PostMapping("/admin/addExam")
     public ModelAndView addExam(@RequestParam("questionNo") String questionNo,
-                                @RequestParam("topicId") int topicId,
-                                RedirectAttributes redirectAttributes) {
-        try {
-            Exam exam = new Exam();
-            exam.setQuestionNo(Integer.parseInt(questionNo));
-            exam.setTopicId(topicId);
-            exam.setTime(new Date());
-            exam.setPercent(0);
-            examService.saveExam(exam);
-        } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("message", "Error adding exam");
-            return new ModelAndView("redirect:/admin");
+                          @RequestParam Map<String, String> requestParams) {
+
+        // Tạo một Map để chứa topicId và numOfQu tương ứng
+        Map<Long, Integer> topicNumOfQuMap = new HashMap<>();
+
+        // Duyệt qua các tham số trong requestParams để tách giá trị numOfQu tương ứng với từng topicId
+        for (Map.Entry<String, String> entry : requestParams.entrySet()) {
+            String paramName = entry.getKey();
+            String paramValue = entry.getValue();
+
+            // Kiểm tra các paramName để xác định danh sách topic và numQu
+            // Ví dụ: paramName có dạng "topic1", "numQu.OfTopic1", ...
+            if (paramName.startsWith("topic")) {
+                // Xử lý danh sách topic được chọn (paramValue chứa giá trị của topic.id)
+                Long topicId = Long.parseLong(paramValue);
+                // Tạo tên tham số numOfQu tương ứng
+                String numOfQuParamName = "numQu.OfTopic" + topicId;
+                // Lấy giá trị numOfQu từ requestParams dựa vào tên tham số numOfQu tương ứng
+                String numOfQuValue = requestParams.get(numOfQuParamName);
+                // Chuyển đổi giá trị numOfQu từ String sang Integer (hoặc bạn có thể sử dụng parseInt)
+                Integer numOfQu = Integer.valueOf(numOfQuValue);
+
+                // Đưa cặp topicId và numOfQu vào Map
+                topicNumOfQuMap.put(topicId, numOfQu);
+            }
         }
-        ModelAndView modelAndView1 = new ModelAndView("redirect:/admin/exams");
-        redirectAttributes.addFlashAttribute("message", "Exam added successfully");
-        return modelAndView1;
+
+        // Sau khi có Map mới tương ứng <topicId, numOfQu>, bạn có thể thực hiện các thao tác cần thiết với dữ liệu này.
+        Exam exam = new Exam();
+        exam.setQuestionNo(Integer.parseInt(questionNo));
+        exam.setTime(new Date());
+        exam.setPercent(0);
+        exam.setTopicId(1);
+        for (Map.Entry<Long, Integer> entry : topicNumOfQuMap.entrySet()) {
+            Long topicId = entry.getKey();
+            Integer numOfQu = entry.getValue();
+            ExamTopic examTopic = new ExamTopic();
+            examTopic.setTopic(topicService.getTopicById(topicId.intValue()));
+            examTopic.setPercent(0);
+            exam.addExamTopic(examTopic);
+
+            System.out.println("topicId: " + topicId + ", numOfQu: " + numOfQu);
+        }
+
+        examService.saveExam(exam);
+
+        // Redirect hoặc trả về view (tùy vào logic của ứng dụng)
+        return new ModelAndView("redirect:/admin/exams"); // Thay thế "path-to-some-page" bằng đường dẫn mong muốn
     }
 
     @RequestMapping(value = "/admin/exams", method = RequestMethod.GET)

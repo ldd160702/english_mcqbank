@@ -19,7 +19,9 @@
         <br>
         <label for="topic">Topic:</label>
         <c:forEach items="${topics}" var="topic">
-            <input type="radio" name="topicId" id="topic" value="${topic.id}"> ${topic.name} <br>
+            <input type="checkbox" name="topic${topic.id}" id="topic" value="${topic.id}"> ${topic.name}:
+            <input type="text" name="numQu.OfTopic${topic.id}">
+            <br>
         </c:forEach>
         <button type="submit">Add</button>
     </form:form>

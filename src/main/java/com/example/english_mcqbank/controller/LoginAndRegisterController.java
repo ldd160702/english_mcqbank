@@ -5,6 +5,7 @@ import com.example.english_mcqbank.model.UserEntity;
 import com.example.english_mcqbank.service.LogService;
 import com.example.english_mcqbank.service.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
@@ -26,7 +27,18 @@ public class LoginAndRegisterController {
     private final PasswordEncoder passwordEncoder;
 
     @RequestMapping("/login-page")
-    public ModelAndView loginPage() {
+    public ModelAndView loginPage(Authentication authentication) {
+        if (authentication != null && authentication.isAuthenticated()) {
+            UserEntity user = userService.getUserByUsername(authentication.getName());
+            if (user != null) {
+                if (user.getRoles()[0].equals("ROLE_ADMIN")) {
+                    return new ModelAndView("redirect:/admin");
+                } else if (user.getRoles()[0].equals("ROLE_USER")) {
+                    return new ModelAndView("redirect:/user");
+                }
+            }
+        }
+
         return new ModelAndView("login-page");
         //return new ModelAndView("fancy-login");
     }

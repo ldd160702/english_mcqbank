@@ -19,11 +19,19 @@ public class ExamTopic {
     @Column(name = "et_id")
     private Integer id;
 
-    @Column(name = "ex_id")
-    private Integer examId;
+//    @Column(name = "ex_id")
+//    private Integer examId;
 
-    @Column(name = "tp_id")
-    private Integer topicId;
+    @ManyToOne
+    @JoinColumn(name = "ex_id")
+    private Exam exam;
+
+//    @Column(name = "tp_id")
+//    private Integer topicId;
+
+    @OneToOne
+    @JoinColumn(name = "tp_id")
+    private Topic topic;
 
     @Column(name = "et_percent")
     private Integer percent;

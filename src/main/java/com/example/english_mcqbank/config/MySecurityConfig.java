@@ -5,8 +5,10 @@ import com.example.english_mcqbank.service.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -41,8 +43,10 @@ public class MySecurityConfig {
                 .authorizeRequests()
                 .antMatchers("/user/**").hasAnyRole("USER", "ADMIN")
                 .antMatchers("/questions/**").hasRole("USER")
-                .antMatchers("/admin/**").hasRole("ADMIN")
-                .antMatchers("/", "/home", "/login", "/register", "/css/**","/js/**","/test/**").permitAll() // Cho phép tất cả mọi người truy cập vào 2 địa chỉ này
+                .antMatchers("/admin/**", "/api/**").hasRole("ADMIN")
+                .antMatchers("/", "/home", "/login", "/register","/test/**").permitAll() // Cho phép tất cả mọi người truy cập vào 2 địa chỉ này
+                .antMatchers("/css/**","/js/**", "/abc").permitAll() // make user cant access to /css, /js by spring security but web app still can access
+
                 .anyRequest().authenticated() // Tất cả các request khác đều cần phải xác thực mới được truy cập
                 .and()
                 .formLogin() // Cho phép người dùng xác thực bằng form login
@@ -64,6 +68,9 @@ public class MySecurityConfig {
                 .and()
                 .httpBasic()
                 .authenticationEntryPoint(basicAuthenticationEntryPoint);
+        // make user cant access to /css, /js by spring security but web app still can access
+
+
 
         return http.build();
     }
@@ -72,6 +79,7 @@ public class MySecurityConfig {
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
+
 
 }
 

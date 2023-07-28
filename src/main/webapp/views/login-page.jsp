@@ -54,7 +54,7 @@
                         <span class="fa fa-user-o"></span>
                     </div>
                     <h3 class="text-center mb-4">Have an account?</h3>
-                    <form:form action="${pageContext.request.contextPath}/login-processing" method="post" class="login-form">
+                    <form:form action="${pageContext.request.contextPath}/login-processing" method="post" class="login-form" id="loginForm">
                         <div class="form-group">
                             <div class="w-100">
                                 <c:if test="${param.error != null}">
@@ -80,17 +80,16 @@
                                 <c:if test="${logoutMessage != null}">
                                     <div class="alert alert-success col-xs-offset-1 col-xs-10">
                                             ${logoutMessage}
-
                                     </div>
                                 </c:if>
                             </div>
                         </div>
 
                         <div class="form-group">
-                            <input type="text" name="username" class="form-control rounded-left" placeholder="Username" value="" required>
+                            <input type="text" name="username" id="username" class="form-control rounded-left" placeholder="Username" value="" required>
                         </div>
                         <div class="form-group d-flex">
-                            <input type="password" name="password" class="form-control rounded-left" placeholder="Password" value="" required>
+                            <input type="password" name="password" id="password" class="form-control rounded-left" placeholder="Password" value="" required>
                         </div>
                         <div class="form-group d-md-flex">
 <%--                            <div class="w-50">--%>
