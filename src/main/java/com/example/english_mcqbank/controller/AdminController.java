@@ -28,7 +28,14 @@ public class AdminController {
     final PasswordEncoder passwordEncoder;
     final ExamService examService;
 
-    @RequestMapping(value = "/admin/addUser", method = RequestMethod.GET)
+    @RequestMapping(value = "/admin/users", method = RequestMethod.GET)
+    public String users(Model model) {
+        List<UserEntity> users = userService.getAllUsers();
+        model.addAttribute("users", users);
+        return "allUsers"; // Trả về admin.jsp
+    }
+
+    @RequestMapping(value = "/admin/users/new", method = RequestMethod.GET)
     public String addUser(Model model) {
         model.addAttribute("user", new UserEntity());
         return "addUser"; // Trả về admin.jsp

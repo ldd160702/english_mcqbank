@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -35,16 +37,15 @@ public class Exam {
     private Date time;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "exam")
+    //@Fetch(value = FetchMode.SUBSELECT)
     //@JoinColumn(name = "ex_id")
     private List<Result> resultList;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "exam")
+    //@Fetch(value = FetchMode.SUBSELECT)
     //@JoinColumn(name = "ex_id")
     private List<ExamTopic> examTopicList;
 
-//    @OneToOne
-//    @JoinColumn(name = "ex_id")
-//    private ExamTopic examTopic;
     public void addExamTopic(ExamTopic examTopic) {
         if (examTopicList == null) {
             examTopicList = new ArrayList<>();

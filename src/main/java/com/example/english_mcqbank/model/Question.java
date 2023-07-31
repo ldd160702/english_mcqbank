@@ -46,6 +46,10 @@ public class Question {
     @Column(name = "tp_id")
     private Integer topicId;
 
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "tp_id")
+//    private Topic topic;
+
     @Column(name = "DIFFICULT_LEVEL")
     private Integer level;
 

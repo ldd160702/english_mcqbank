@@ -10,41 +10,10 @@
 <h1>Admin role</h1>
 <hr>
 <h2>Users</h2>
-<table border="1">
-    <thead>
-    <tr>
-        <th>Username</th>
-        <th>Enabled</th>
-        <th>Role</th>
-        <th>Action</th>
-    </tr>
-    </thead>
-    <tbody>
-    <c:forEach var="user" items="${users}">
-        <tr>
-            <td>${user.username}</td>
-            <td>${user.enabled}</td>
-            <td>
-                <ul>
-                <c:forEach var="role" items="${user.roles}">
-                    <li>${role}</li>
-                </c:forEach>
-                </ul>
-            </td>
-            <td>
-                <ul>
-                    <li>
-                        <a onclick="if (!confirm('Are you sure to delete this user?')) return false" href="${pageContext.request.contextPath}/admin/delete?username=${user.username}">Delete</a>
-                    </li>
-                </ul>
-            </td>
-        </tr>
-    </c:forEach>
-    </tbody>
-</table>
+<a href="${pageContext.request.contextPath}/admin/users">All users</a>
 
 <hr>
-<h3><a href="${pageContext.request.contextPath}/admin/addUser">Add user</a> </h3>
+<h3><a href="${pageContext.request.contextPath}/admin/users/new">Add user</a> </h3>
 <hr>
 <h3><a href="${pageContext.request.contextPath}/admin/exams">All Exam</a> </h3>
 <hr>
