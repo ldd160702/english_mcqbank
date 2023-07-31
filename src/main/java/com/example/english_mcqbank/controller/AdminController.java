@@ -28,6 +28,29 @@ public class AdminController {
     final PasswordEncoder passwordEncoder;
     final ExamService examService;
 
+    @RequestMapping("/admin/users/{id}")
+    public ModelAndView viewUser(@PathVariable Integer id) {
+        ModelAndView view = new ModelAndView("profile");
+        UserEntity user = userService.getUserByUserid(id);
+        view.addObject("user", user);
+        return view; // Trả về admin.jsp
+    }
+
+    @RequestMapping("/admin/users/{id}/logs")
+    public ModelAndView viewUserLogs(@PathVariable Integer id,
+                                     @RequestParam(defaultValue = "0") int page,
+                                     @RequestParam(defaultValue = "20") int size) {
+        ModelAndView logsModelAndView = new ModelAndView("logs");
+        UserEntity user = userService.getUserByUserid(id);
+        List<Log> logs = logService.getLogsByUser(user, page, size);
+        logsModelAndView.addObject("logs", logs);
+        logsModelAndView.addObject("currentPage", page);
+        assert logs != null;
+        boolean hasNext = logs.size() >= size;
+        logsModelAndView.addObject("hasNext", hasNext);
+        return logsModelAndView; // Trả về admin.jsp
+    }
+
     @RequestMapping(value = "/admin/users", method = RequestMethod.GET)
     public String users(Model model) {
         List<UserEntity> users = userService.getAllUsers();
@@ -123,7 +146,7 @@ public class AdminController {
         return modelAndView;
     }
 
-    @RequestMapping(value = "/admin/addExam", method = RequestMethod.GET)
+    @RequestMapping(value = "/admin/exams/new", method = RequestMethod.GET)
     public ModelAndView addExam() {
         List<Topic> topics = topicService.getAllTopics();
         ModelAndView modelAndView = new ModelAndView("addExam");

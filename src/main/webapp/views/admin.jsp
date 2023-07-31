@@ -12,11 +12,13 @@
 <h2>Users</h2>
 <a href="${pageContext.request.contextPath}/admin/users">All users</a>
 
-<hr>
+<br>
 <h3><a href="${pageContext.request.contextPath}/admin/users/new">Add user</a> </h3>
 <hr>
+<h2>Exams</h2>
 <h3><a href="${pageContext.request.contextPath}/admin/exams">All Exam</a> </h3>
 <hr>
+
 <c:if test="${not empty message}">
     <div class="message">${message}</div>
 </c:if>

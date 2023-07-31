@@ -83,7 +83,7 @@
     </tbody>
     <hr>
     <sec:authorize access="hasRole('ADMIN')">
-        <h3><a href="${pageContext.request.contextPath}/admin/addExam">Add Exam</a> </h3>
+        <h3><a href="${pageContext.request.contextPath}/admin/exams/new">Add Exam</a> </h3>
     </sec:authorize>
 
 </table>
