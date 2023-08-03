@@ -7,6 +7,7 @@ import com.example.english_mcqbank.service.LogService;
 import com.example.english_mcqbank.service.TopicService;
 import com.example.english_mcqbank.service.UserDetailsServiceImpl;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,6 +28,15 @@ public class AdminController {
     final TopicService topicService;
     final PasswordEncoder passwordEncoder;
     final ExamService examService;
+
+    @RequestMapping("/admin/profile")
+    public ModelAndView adminProfile(Authentication authentication) {
+        ModelAndView view = new ModelAndView("profile");
+        String username = authentication.getName();
+        UserEntity user = userService.getUserByUsername(username);
+        view.addObject("user", user);
+        return view; // Trả về admin.jsp
+    }
 
     @RequestMapping("/admin/users/{id}")
     public ModelAndView viewUser(@PathVariable Integer id) {

@@ -8,6 +8,7 @@
 </head>
 <body>
 <h1>Admin role</h1>
+<a href="${pageContext.request.contextPath}/admin/profile">Admin profile </a>
 <hr>
 <h2>Users</h2>
 <a href="${pageContext.request.contextPath}/admin/users">All users</a>
@@ -17,6 +18,11 @@
 <hr>
 <h2>Exams</h2>
 <h3><a href="${pageContext.request.contextPath}/admin/exams">All Exam</a> </h3>
+<hr>
+
+<h2>Questions</h2>
+<h3><a href="${pageContext.request.contextPath}/admin/exams">All Question</a> </h3>
+<h3><a href="#">Add question by excel</a> </h3>
 <hr>
 
 <c:if test="${not empty message}">
@@ -31,4 +37,5 @@ All users logs: <a href="${pageContext.request.contextPath}/admin/allLogs">Link<
 </form:form>
 <%--<a href="${pageContext.request.contextPath}/main">Back to the homepage</a>--%>
 </body>
+
 </html>
